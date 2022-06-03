@@ -13,23 +13,23 @@ public class PersonController {
     private PersonService personService;
 
     @PostMapping
-    public Mono<Void> post(@RequestBody Mono<Person> personMono) {
-        return personService.insert(personMono);
+    public Mono<Void> post(@RequestBody Person person) {
+        return personService.insert(Mono.just(person));
     }
 
     @GetMapping("/{id}")
     public Mono<Person> getPerson(@PathVariable("id") String id) {
-        return Mono.just(new Person());
+        return personService.getPerson(id);
     }
 
     @PutMapping
     public Mono<Void> update(@RequestBody Mono<Person> personMono) {
-        return Mono.empty();
+        return personService.update(personMono);
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> delete(@PathVariable("id") String id) {
-        return Mono.empty();
+        return personService.delete(id);
     }
 
     @GetMapping

@@ -24,4 +24,22 @@ public class PersonService {
                 .switchIfEmpty(Mono.defer(() -> personMono.doOnNext(repository::save)))
                 .then();
     }
+
+    public Mono<Person> getPerson(String id){
+        return repository.findById(id);
+    }
+
+    public Mono<Void> update(Mono<Person> personMono) {
+        return personMono
+                .flatMap(person -> validateBeforeInsert.apply(repository, person))
+                .switchIfEmpty(Mono.defer(() -> personMono.doOnNext(repository::save)))
+                .then();
+    }
+
+    public Mono<Void> delete(String id){
+        var personMono = repository.findById(id);
+        return personMono.flatMap(person -> validateBeforeInsert.apply(repository, person))
+                .switchIfEmpty(Mono.defer(() -> personMono.doOnNext(repository::delete)))
+                .then();
+    }
 }
